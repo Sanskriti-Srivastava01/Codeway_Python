@@ -1,32 +1,13 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 1,
-   "id": "ea540c49",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-   "import tkinter as tk",
-   "from tkinter import messagebox",
-   "from tkinter import ttk"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "e518a768",
-   "metadata": {},
-   "source": [
-    "## Defining the Internal Functions "
-   ]
-  },
-  {
-   "class TodoListApp:",
-       "def __init__(self, master):",
-           "self.master = master",
-           "self.master.title("To-Do List App")",
-           "self.master.geometry("400x300")",
-           "self.tasks = []",
+## Importing Modules
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+class TodoListApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("To-Do List App")
+        self.master.geometry("400x300")
+        self.tasks = []
         self.style = ttk.Style()
         self.style.configure("TButton", font=("Helvetica", 10), padding=5)
         self.style.configure("TEntry", font=("Helvetica", 10), padding=5)
@@ -47,3 +28,74 @@
         self.exit_button.pack()
         self.load_tasks()
         self.center_window()
+    def center_window(self):
+        self.master.update_idletasks()
+        width = self.master.winfo_width()
+        height = self.master.winfo_height()
+        x = (self.master.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.master.winfo_screenheight() // 2) - (height // 2)
+        self.master.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+    def load_tasks(self):
+        try:
+            with open("tasks.txt", "r") as file:
+                self.tasks = file.read().splitlines()
+        except FileNotFoundError:
+            pass
+        self.refresh_task_listbox()
+    def save_tasks(self):
+        with open("tasks.txt", "w") as file:
+            for task in self.tasks:
+                file.write(task + "\n")
+    def refresh_task_listbox(self):
+        self.task_listbox.delete(0, tk.END)
+        for task in self.tasks:
+            self.task_listbox.insert(tk.END, task)
+    def add_task(self):
+        task = self.task_entry.get().strip()
+        if task:
+            self.tasks.append(task)
+            self.save_tasks()
+            self.refresh_task_listbox()
+            self.task_entry.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Warning", "Please enter a task.")
+    def edit_task(self):
+        selected_index = self.task_listbox.curselection()
+        if selected_index:
+            task_index = selected_index[0]
+            edited_task = self.task_entry.get().strip()
+            if edited_task:
+                self.tasks[task_index] = edited_task
+                self.save_tasks()
+                self.refresh_task_listbox()
+                self.task_entry.delete(0, tk.END)
+            else:
+                messagebox.showwarning("Warning", "Please enter a task to edit.")
+        else:
+            messagebox.showwarning("Warning", "Please select a task to edit.")
+    def delete_task(self):
+        selected_index = self.task_listbox.curselection()
+        if selected_index:
+            task_index = selected_index[0]
+            task = self.tasks.pop(task_index)
+            self.save_tasks()
+            self.refresh_task_listbox()
+            messagebox.showinfo("Information", f"Task '{task}' deleted successfully.")
+        else:
+            messagebox.showwarning("Warning", "Please select a task to delete.")
+    def delete_all_tasks(self):
+        if self.tasks:
+            self.tasks.clear()
+            self.save_tasks()
+            self.refresh_task_listbox()
+            messagebox.showinfo("Information", "All tasks deleted successfully.")
+        else:
+            messagebox.showinfo("Information", "No tasks to delete.")
+    def exit_app(self):
+        self.master.destroy()
+def main():
+    root = tk.Tk()
+    app = TodoListApp(root)
+    root.mainloop()
+if __name__ == "__main__":
+    main()
