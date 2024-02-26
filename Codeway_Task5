@@ -1,0 +1,66 @@
+import random
+class QuizGame:
+    def __init__(self):
+        self.questions = [
+            MultipleChoiceQuestion("What is the capital of France?", ["A. London", "B. Paris", "C. Rome", "D. Berlin"], "B"),
+            MultipleChoiceQuestion("What is the largest planet in our solar system?", ["A. Mars", "B. Saturn", "C. Jupiter", "D. Earth"], "C"),
+            FillInBlankQuestion("Who wrote 'Romeo and Juliet'?", "William Shakespeare"),
+            FillInBlankQuestion("What is the powerhouse of the cell?", "Mitochondria"),
+            MultipleChoiceQuestion("What is the chemical symbol for water?", ["A. H2O", "B. CO2", "C. NaCl", "D. O2"], "A")
+        ]
+        self.score = 0
+    def welcome_message(self):
+        print("Welcome to the Quiz Game!")
+        print("Rules: Answer the multiple-choice questions or fill in the blank.")
+    def present_quiz(self):
+        random.shuffle(self.questions)
+        for question in self.questions:
+            question.display()
+            user_answer = input("Your answer: ")
+            if question.check_answer(user_answer):
+                print("Correct!")
+                self.score += 1
+            else:
+                print("Incorrect. The correct answer is:", question.correct_answer)
+    def display_results(self):
+        print("\nQuiz completed!")
+        print("Your score:", self.score, "out of", len(self.questions))
+        percentage = (self.score / len(self.questions)) * 100
+        print("Percentage: {:.2f}%".format(percentage))
+    def play_again(self):
+        choice = input("\nDo you want to play again? (y/n): ").lower()
+        return choice == "y"
+class Question:
+    def __init__(self, text, correct_answer):
+        self.text = text
+        self.correct_answer = correct_answer
+    def display(self):
+        raise NotImplementedError
+    def check_answer(self, user_answer):
+        raise NotImplementedError
+class MultipleChoiceQuestion(Question):
+    def __init__(self, text, choices, correct_choice):
+        super().__init__(text, correct_choice)
+        self.choices = choices
+    def display(self):
+        print(self.text)
+        for choice in self.choices:
+            print(choice)
+    def check_answer(self, user_answer):
+        return user_answer.lower() == self.correct_answer.lower()
+class FillInBlankQuestion(Question):
+    def display(self):
+        print(self.text)
+    def check_answer(self, user_answer):
+        return user_answer.lower() == self.correct_answer.lower()
+def main():
+    while True:
+        game = QuizGame()
+        game.welcome_message()
+        game.present_quiz()
+        game.display_results()
+        if not game.play_again():
+            break
+    print("Thank you for playing!")
+if __name__ == "__main__":
+    main()
