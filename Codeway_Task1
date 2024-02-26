@@ -1,0 +1,49 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "ea540c49",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+   "import tkinter as tk",
+   "from tkinter import messagebox",
+   "from tkinter import ttk"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e518a768",
+   "metadata": {},
+   "source": [
+    "## Defining the Internal Functions "
+   ]
+  },
+  {
+   "class TodoListApp:",
+       "def __init__(self, master):",
+           "self.master = master",
+           "self.master.title("To-Do List App")",
+           "self.master.geometry("400x300")",
+           "self.tasks = []",
+        self.style = ttk.Style()
+        self.style.configure("TButton", font=("Helvetica", 10), padding=5)
+        self.style.configure("TEntry", font=("Helvetica", 10), padding=5)
+        self.style.configure("TLabel", font=("Helvetica", 12))
+        self.task_entry = ttk.Entry(master, width=40)
+        self.task_entry.pack(pady=10)
+        self.add_button = ttk.Button(master, text="Add Task", command=self.add_task)
+        self.add_button.pack()
+        self.task_listbox = tk.Listbox(master, width=50)
+        self.task_listbox.pack(pady=10)
+        self.edit_button = ttk.Button(master, text="Edit Task", command=self.edit_task)
+        self.edit_button.pack()
+        self.delete_button = ttk.Button(master, text="Delete Task", command=self.delete_task)
+        self.delete_button.pack()
+        self.delete_all_button = ttk.Button(master, text="Delete All Tasks", command=self.delete_all_tasks)
+        self.delete_all_button.pack()
+        self.exit_button = ttk.Button(master, text="Exit", command=self.exit_app)
+        self.exit_button.pack()
+        self.load_tasks()
+        self.center_window()
